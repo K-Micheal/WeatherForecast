@@ -14,21 +14,20 @@ namespace WeatherForecastSwagger.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        
 
         [HttpGet("/GetWeather")]// Get method for current weather
-        public object Get()
+        public object Get(string city)
         {
+            if (city == null)
+            {
+                return "Please enter city";
+            }
             string jsonResultWeather = String.Empty;
             WeatherForecast weather = new WeatherForecast();
             try
             {
-                WebRequest request = WebRequest.Create("https://api.openweathermap.org/data/2.5/weather?q=Dnipro&units=metric&appid=1e250eda137c9d35e05ea0e15709bd6e");
+                WebRequest request = WebRequest.Create("https://api.openweathermap.org/data/2.5/weather?q="+ city + "&units=metric&appid=1e250eda137c9d35e05ea0e15709bd6e");
                 using (WebResponse response = request.GetResponse())
                 {
                     using (Stream stream = response.GetResponseStream())
@@ -62,15 +61,19 @@ namespace WeatherForecastSwagger.Controllers
         }
 
         [HttpGet("/GetForecast")]// Get method for get forecast
-        public object GetForecast()
+        public object GetForecast(string city)
         {
+            if (city == null)
+            {
+                return "Please enter city";
+            }
             WeatherForecast forecast = new WeatherForecast();
             List<WeatherForecast> listForecast = new List<WeatherForecast>();
             string jsonResultForecast = String.Empty;
 
             try
             {
-                WebRequest request = WebRequest.Create("https://api.openweathermap.org/data/2.5/forecast?q=Dnipro&units=metric&appid=1e250eda137c9d35e05ea0e15709bd6e");
+                WebRequest request = WebRequest.Create("https://api.openweathermap.org/data/2.5/forecast?q="+ city + "&units=metric&appid=1e250eda137c9d35e05ea0e15709bd6e");
                 using (WebResponse response = request.GetResponse())
                 {
                     using (Stream stream = response.GetResponseStream())
@@ -115,20 +118,6 @@ namespace WeatherForecastSwagger.Controllers
             
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+       
     }
 }
